@@ -1,5 +1,6 @@
-import Fastify from 'fastify';import evaluateData from './schedule.js';
-import fs from 'fs';
+import Fastify from 'fastify';
+import evaluateData from './schedule.js';
+import { template } from './template.js';
 const fastify = Fastify({
   logger: true,
 });
@@ -14,13 +15,13 @@ fastify.get('/schedule', async (request, reply) => {
   reply.send({ today_schedule, tomorrow_schedule });
 });
 fastify.get('/page', async (request, reply) => {
-  const template = fs.readFileSync('./static/index.html', 'utf-8');
-  const stringifiedData = template.toString();
+  const stringifiedData = template;
   const { today_intervals, tomorrow_intervals } = await evaluateData();
   const formatIntervals = (interval) => {
     if (interval.length === 0) return 'Немає графіку на цей день';
     const intervalStrings = interval.map(
-      ({ start, end }) => `<strong>Початок:</strong> ${start} - <strong>Кінець:</strong> ${end}`,
+      ({ start, end }) =>
+        `<strong>Початок:</strong> ${start} - <strong>Кінець:</strong> ${end}`,
     );
 
     return intervalStrings.join('<br>');

@@ -1,5 +1,4 @@
-<!doctype html>
-<html lang="uk">
+export const template = `<!doctype html><html lang="uk">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -102,3 +101,4 @@
     </main>
   </body>
 </html>
+`;
