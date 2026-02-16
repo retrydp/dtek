@@ -88,7 +88,7 @@ export const template = `<!doctype html><html lang="uk">
   <body>
     <main>
       <header>
-        <h1>Мій графік</h1>
+        <h1>Графік Аграновой І. В.😀</h1>
       </header>
       <section>
         <h2>Сьогодні</h2>
