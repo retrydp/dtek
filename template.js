@@ -10,7 +10,7 @@ export const template = `<!doctype html><html lang="uk">
       body {
         font-family: 'Baloo 2', cursive;
         margin: 0;
-        padding: 40px 20px;
+        padding: 0px 20px;
         background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
         display: flex;
         justify-content: center;
@@ -88,7 +88,7 @@ export const template = `<!doctype html><html lang="uk">
   <body>
     <main>
       <header>
-        <h1>Графік Аграновой І. В.😀</h1>
+        <h1>Графік Інни Володимирівни😀</h1>
       </header>
       <section>
         <h2>Сьогодні</h2>
