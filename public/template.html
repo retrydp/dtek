@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="https://static.yasno.ua/favicon.ico">
+    <title>Графік</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+      :root {
+        /* Dark theme (default) */
+        --bg-gradient-start: #1a1d21;
+        --bg-gradient-end: #2d3238;
+        --card-bg: rgba(45, 50, 56, 0.6);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --text-primary: #ffffff;
+        --text-secondary: #8b929a;
+        --text-muted: #6b7280;
+        --text-accent: #ff6b35;
+        --row-bg: rgba(255, 255, 255, 0.03);
+        --row-border: rgba(255, 255, 255, 0.05);
+        --date-badge-bg: rgba(255, 255, 255, 0.08);
+        --date-badge-text: #a0a8b0;
+        --btn-bg: rgba(255, 255, 255, 0.08);
+        --btn-border: rgba(255, 255, 255, 0.05);
+        --btn-text: #8b929a;
+        --btn-hover-bg: rgba(255, 107, 53, 0.15);
+        --btn-hover-border: rgba(255, 107, 53, 0.3);
+        --today-header-bg: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(255, 107, 53, 0.05));
+        --tomorrow-header-bg: linear-gradient(135deg, rgba(100, 116, 139, 0.15), rgba(100, 116, 139, 0.05));
+        --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        --th-text: #6b7280;
+        --td-text: #e4e4e4;
+        --td-end-text: #e4e4e4;
+        --footer-text: #4b5563;
+        --hover-row-bg: rgba(255, 107, 53, 0.1);
+      }
+
+      [data-theme="light"] {
+        /* Light theme */
+        --bg-gradient-start: #f0f2f5;
+        --bg-gradient-end: #e4e7eb;
+        --card-bg: rgba(255, 255, 255, 0.7);
+        --card-border: rgba(0, 0, 0, 0.08);
+        --text-primary: #1a1d21;
+        --text-secondary: #6b7280;
+        --text-muted: #9ca3af;
+        --text-accent: #ff6b35;
+        --row-bg: rgba(0, 0, 0, 0.02);
+        --row-border: rgba(0, 0, 0, 0.06);
+        --date-badge-bg: rgba(0, 0, 0, 0.06);
+        --date-badge-text: #6b7280;
+        --btn-bg: rgba(0, 0, 0, 0.06);
+        --btn-border: rgba(0, 0, 0, 0.05);
+        --btn-text: #6b7280;
+        --btn-hover-bg: rgba(255, 107, 53, 0.12);
+        --btn-hover-border: rgba(255, 107, 53, 0.25);
+        --today-header-bg: linear-gradient(135deg, rgba(255, 107, 53, 0.12), rgba(255, 107, 53, 0.04));
+        --tomorrow-header-bg: linear-gradient(135deg, rgba(100, 116, 139, 0.12), rgba(100, 116, 139, 0.04));
+        --shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        --th-text: #9ca3af;
+        --td-text: #374151;
+        --td-end-text: #4b5563;
+        --footer-text: #9ca3af;
+        --hover-row-bg: rgba(255, 107, 53, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+        min-height: 100vh;
+        color: var(--text-primary);
+        transition: background 0.3s ease;
+      }
+
+      .container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 24px 16px;
+      }
+
+      header {
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-bottom: 16px;
+      }
+
+      .theme-toggle,
+      .refresh-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--btn-bg);
+        border: 1px solid var(--btn-border);
+        color: var(--btn-text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
+      }
+
+      .theme-toggle:hover,
+      .refresh-btn:hover {
+        background: var(--btn-hover-bg);
+        border-color: var(--text-accent);
+        color: var(--text-accent);
+      }
+
+      .refresh-btn:hover {
+        transform: rotate(180deg);
+      }
+
+      .theme-toggle svg,
+      .refresh-btn svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .refresh-btn.spinning svg {
+        animation: spin 0.6s ease-in-out;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .theme-toggle .sun-icon {
+        display: none;
+      }
+
+      [data-theme="light"] .theme-toggle .sun-icon {
+        display: block;
+      }
+
+      [data-theme="light"] .theme-toggle .moon-icon {
+        display: none;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: 6px;
+        margin-bottom: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: block;
+        text-align: center;
+      }
+
+      .date-badge {
+        background: var(--date-badge-bg);
+        padding: 8px 16px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        margin-block: 14px;
+        margin-inline: auto;
+        font-weight: 500;
+        text-align: center;
+        color: var(--date-badge-text);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--card-border);
+        overflow: hidden;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow);
+      }
+
+      .card-header {
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid var(--card-border);
+      }
+
+      .card-header.today {
+        background: var(--today-header-bg);
+      }
+
+      .card-header.tomorrow {
+        background: var(--tomorrow-header-bg);
+      }
+
+      .card-header .icon {
+        font-size: 1.3rem;
+      }
+
+      .card-header h2 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        flex: 1;
+      }
+
+      .card-header.today h2 {
+        color: var(--text-accent);
+      }
+
+      .card-header.tomorrow h2 {
+        color: var(--text-secondary);
+      }
+
+      .card-body {
+        padding: 16px;
+      }
+
+      .schedule-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+      }
+
+      .schedule-table th {
+        padding: 10px 14px;
+        text-align: left;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--th-text);
+      }
+
+      .schedule-table td {
+        padding: 14px;
+        font-size: 0.95rem;
+        color: var(--td-text);
+        background: var(--row-bg);
+        border-top: 1px solid var(--row-border);
+        border-bottom: 1px solid var(--row-border);
+      }
+
+      .schedule-table td:first-child {
+        border-left: 1px solid var(--row-border);
+        border-radius: 10px 0 0 10px;
+        font-weight: 600;
+        color: var(--text-accent);
+      }
+
+      .schedule-table td:last-child {
+        border-right: 1px solid var(--row-border);
+        border-radius: 0 10px 10px 0;
+        font-weight: 500;
+        color: var(--td-end-text);
+      }
+
+      .time-row {
+        transition: all 0.2s ease;
+      }
+
+      .time-row:hover td {
+        background: var(--hover-row-bg);
+      }
+
+      .no-schedule {
+        text-align: center;
+        padding: 36px 20px;
+        color: var(--text-muted);
+      }
+
+      .no-schedule .icon {
+        font-size: 2.2rem;
+        margin-bottom: 14px;
+        display: block;
+        opacity: 0.6;
+      }
+
+      .no-schedule p {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      /* Glow effect for today's times */
+      .glow-text {
+        text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+      }
+
+      /* Desktop styles */
+      @media (min-width: 600px) {
+        .container {
+          padding: 32px 24px;
+        }
+
+        header h1 {
+          font-size: 1.6rem;
+        }
+
+        .header-actions {
+          gap: 16px;
+        }
+
+        .theme-toggle,
+        .refresh-btn {
+          width: 48px;
+          height: 48px;
+        }
+
+        .theme-toggle svg,
+        .refresh-btn svg {
+          width: 22px;
+          height: 22px;
+        }
+
+        .subtitle {
+          font-size: 0.9rem;
+        }
+
+        .card {
+          margin-bottom: 20px;
+        }
+
+        .card-header {
+          padding: 18px 22px;
+        }
+
+        .card-header h2 {
+          font-size: 1.05rem;
+        }
+
+        .card-body {
+          padding: 20px;
+        }
+
+        .schedule-table th {
+          padding: 12px 16px;
+          font-size: 0.75rem;
+        }
+
+        .schedule-table td {
+          padding: 16px;
+          font-size: 1rem;
+        }
+      }
+
+      /* Animation */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .card {
+        animation: fadeInUp 0.4s ease forwards;
+      }
+
+      .card:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+
+      .card:nth-child(3) {
+        animation-delay: 0.15s;
+      }
+
+      /* Separator line */
+      .separator {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        margin: 24px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Графік</h1>
+      </header>
+
+      <div class="header-actions">
+        <button class="theme-toggle" id="theme-toggle" title="Змінити тему">
+          <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+          <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </button>
+        <button class="refresh-btn" id="refresh-btn" title="Оновити">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="date-badge" id="current-date"></div>
+
+      <section class="card">
+        <div class="card-header today">
+          <span class="icon">☀️</span>
+          <h2>Сьогодні</h2>
+        </div>
+        <div class="card-body">
+          <table class="schedule-table">
+            <thead>
+              <tr>
+                <th>Початок</th>
+                <th>Кінець</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{today}}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header tomorrow">
+          <span class="icon">🌙</span>
+          <h2>Завтра</h2>
+        </div>
+        <div class="card-body">
+          {{tomorrow}}
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // Display current date
+      const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const dateElement = document.getElementById('current-date');
+      if (dateElement) {
+        dateElement.textContent = new Date().toLocaleDateString('uk-UA', dateOptions);
+      }
+
+      // Theme toggle
+      const themeToggle = document.getElementById('theme-toggle');
+      const html = document.documentElement;
+      
+      // Load saved theme
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        html.setAttribute('data-theme', savedTheme);
+      }
+
+      if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+          const currentTheme = html.getAttribute('data-theme');
+          const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+          
+          if (newTheme === 'light') {
+            html.setAttribute('data-theme', newTheme);
+          } else {
+            html.removeAttribute('data-theme');
+          }
+          
+          localStorage.setItem('theme', newTheme);
+        });
+      }
+
+      // Refresh button with animation
+      const refreshBtn = document.getElementById('refresh-btn');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+          this.classList.add('spinning');
+          setTimeout(() => {
+            window.location.reload();
+          }, 600);
+        });
+      }
+    </script>
+  </body>
+</html>

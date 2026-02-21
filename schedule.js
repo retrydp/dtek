@@ -90,6 +90,12 @@ const evaluateData = async () => {
     };
   } catch (err) {
     console.error('Error:', err.message);
+    return {
+      today_schedule: [],
+      tomorrow_schedule: [],
+      today_intervals: [],
+      tomorrow_intervals: [],
+    };
   }
 };
 
